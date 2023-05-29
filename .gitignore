@@ -2,8 +2,8 @@ Build/
 
 # Xcode
 *.xcworkspace
-xcuserdata/
-*.xcodeproj/xcuserdata/
+*.xcuserdata/
+*.xcodeproj/
 
 # DerivedData
 DerivedData/
