@@ -9,8 +9,7 @@
 
 **이연희 (Backend)**
 
-**이연호 (Backend)**
+**이연호 (Android)**
 
 **방기진 (iOS)**
 
-test branch
