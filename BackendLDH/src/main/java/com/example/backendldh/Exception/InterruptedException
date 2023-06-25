@@ -1,7 +1,0 @@
-package com.example.backendldh.Exception;
-
-public class TryAgainException extends Throwable {
-    public TryAgainException(String message) {
-        super(message);
-    }
-}
