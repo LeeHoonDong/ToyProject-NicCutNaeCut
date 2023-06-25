@@ -9,15 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
+import java.net.URI;
 
 @RestController
 public class GetImageController {
     @Autowired
     private GetImageService getImageService;
     @DeleteMapping("/goBack")//사진등록화면에서 뒤로가기 버튼 클릭 시 이미지 삭제 후 뒤로 돌아가기!
-    public void deleteImage(@RequestBody Media media){
+    public void deleteImageForS3(@RequestBody Media media){
         //일단 이미지 삭제 먼저!
         //해당 메소드가 실행되는 경우는 S3에서 이미지 삭제가 불가능한 경우를 제외한다.
         //왜냐? 해당 메소드는 무조건 getURL이 실행되고 난 후 유저의 행동에 따라 실행이 결정됨.
@@ -45,7 +47,9 @@ public class GetImageController {
        if(getImageUrl==null){
            throw new UrlNotAllowedException("유효시간이 지나 사진을 다운받을 수 없어요...");
        }
-       return ResponseEntity.status(statusCode).build();
+
+       URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{imageurl}").buildAndExpand(getImageUrl).toUri();
+       return ResponseEntity.created(location).build();
     }
     private HttpStatus getStatusFromUrl(String url){
         RestTemplate restTemplate = new RestTemplate();

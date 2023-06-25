@@ -18,7 +18,7 @@ class GetImageControllerTest {
     void goBackSuccess(){
         Media media = new Media();
         media.setFilePath("/Users/ldh/nic/media/82300297/20230621213849");
-        getImageController.goBack(media);
+        getImageController.deleteImageForS3(media);
     }
     @Test
     void getURLSuccess() throws InterruptedException{

@@ -28,7 +28,6 @@ public class GetImageService {
             }
         }
         folder.delete();
-        System.out.println("folder = " + folder);
     }
     public Media crawler(String url) throws InterruptedException {
         Media media = new Media();
@@ -50,8 +49,39 @@ public class GetImageService {
 
         //*******************사실상 여기가 크롤링하는 부분인데************************
         //***************수정이 필요하다고 생각함. 아직 완성되지 않은 코드***************
-        //진짜 겁나게 편협한 생각 일반화의 오류일수도 있지만
-        //body부분에 button있다면, 그거 클릭
+        List<WebElement> button_list = click_button_tag(driver,savePath,media); //button tag 클릭
+        if(button_list.size()!=0){
+            driver.quit();
+            return media;
+        }
+        //button tag 클릭해서 이미지와 동영상 다운로드 받기
+        //button tag 가 없다면, footer 의 a tag 클릭하기
+        List<WebElement> a_list = click_a_tag(driver,savePath,media);
+        if(a_list.size()!=0){
+            driver.quit();
+            return media;
+        }
+        //***************수정이 필요하다고 생각함. 아직 완성되지 않은 코드***************
+        //********************************************************************
+
+        driver.quit();
+        return media;
+    }
+
+    private List<WebElement> click_a_tag(WebDriver driver, String savePath, Media media) throws InterruptedException {
+        WebElement footer_element= driver.findElement(By.tagName("footer"));
+        sleep(1000);
+        List<WebElement> a_list = footer_element.findElements(By.tagName("a"));
+        for(WebElement webElement : a_list){
+            webElement.click();
+            sleep(500);
+            media.setImage(savePath+"/image.jpg");
+        }
+        sleep((500));
+        return a_list;
+    }
+
+    private List<WebElement> click_button_tag(WebDriver driver,String savePath,Media media) throws InterruptedException {
         List<WebElement> list=driver.findElements(By.tagName("button"));
         sleep(1000);
         //없다면, footer부분의 a태그들 싹 다 클릭
@@ -61,12 +91,9 @@ public class GetImageService {
             media.setImage(savePath+"/image.jpg");
         }
         sleep(500);
-        //***************수정이 필요하다고 생각함. 아직 완성되지 않은 코드***************
-        //********************************************************************
-
-        driver.quit();
-        return media;
+        return list;
     }
+
     //크롬 다운로드 경로 바꾸기
     private static ImmutableMap<String, Object> createChromePreferences(String downloadPath) {
         return ImmutableMap.of(
@@ -76,9 +103,3 @@ public class GetImageService {
                 "safebrowsing.enabled", true);
     }
 }
-//TODO
-//1. 다운로드 경로 바꾸기
-//  -> ASIS: 다운로드 폴더, TOBE: 로컬 nic/media : 완료
-//2. Amazon S3에 저장하고 해당 이미지 url 받아오기
-//3. 해당 이미지 url DB에 저장하기
-//4. 해당 이미지 url
